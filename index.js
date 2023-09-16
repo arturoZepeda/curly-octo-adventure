@@ -1,4 +1,5 @@
 // Import dependencies
+const { readExcelController,leeExcel } = require('./excelController');
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -39,8 +40,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // Home route
 app.get('/', (req, res) => {
-//const filter = {};
-//const all = await User.find(filter);
     const filter = {};
     DocumentoSchema.find(filter).then((all)=>{
         res.send(all);
@@ -50,6 +49,8 @@ app.get('/', (req, res) => {
 app.post('/upload', upload.single('image'), (req, res) => {
     console.log(req.file)
     const documento = new DocumentoSchema(req.file);
+    const documentoJSON =   leeExcel(req.file.path);
+    console.log("DOCUMENTO JSON:",documentoJSON);
     documento.save().then(() => console.log('Documento guardado'));
     res.send('Image uploaded successfully');
   })
