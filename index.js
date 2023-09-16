@@ -39,7 +39,7 @@ const DocumentoSchema = mongoose.model('Documento', {
 const GastoSchema = mongoose.model('Gasto', {
   tarjeta: String,
   Cargo: {
-    fecha: Date,
+    fecha: String,
     descripcion: String,
     cargo: Number,
     abono: Number,
@@ -55,27 +55,31 @@ app.get('/', (req, res) => {
     res.send(all);
   })
 })
+app.get('/gastos', (req, res) => {
+  const filter = {};
+  GastoSchema.find(filter).then((all) => {
+    res.send(all);
+  })
+})
 // Image processing route
 app.post('/upload', upload.single('image'), (req, res) => {
 
   const documento = new DocumentoSchema(req.file);
   const documentoJSON = leeExcel(req.file.path);
-  const gasto = new GastoSchema();
-  gasto.tarjeta = documentoJSON [0][0];
-
+  const gastoTemp = {};
   for (let i=3; i<documentoJSON.length; i++) {
-    gasto.Cargo = new GastoSchema().Cargo;
-    gasto.Cargo.fecha = documentoJSON[i][0];
-    gasto.Cargo.descripcion = documentoJSON[i][1];
-    gasto.Cargo.cargo = documentoJSON[i][2];
-    gasto.Cargo.abono = documentoJSON[i][3];
-    
+    if (documentoJSON[i][1] != null || documentoJSON[i][1] != undefined || documentoJSON[i][1] != ""){
+    const gasto = new GastoSchema();
+    gasto.tarjeta = documentoJSON [0][0];
+    gastoTemp.fecha = documentoJSON[i][0];
+    gastoTemp.descripcion = documentoJSON[i][1];
+    gastoTemp.cargo = documentoJSON[i][2];
+    gastoTemp.abono = documentoJSON[i][3];
+    gasto.Cargo = {...gastoTemp};
+    console.log("gasto:",gasto);
+    gasto.save().then(() => console.log('Gasto guardado'));
+    }
   }
-  console.log(gasto);
-  //const gasto = new GastoSchema(documentoJSON);
-  
-  
-  //gasto.save().then(() => console.log('Gasto guardado'));
   documento.save().then(() => console.log('Documento guardado'));
   res.send('Image uploaded successfully');
 })
