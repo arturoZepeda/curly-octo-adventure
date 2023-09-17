@@ -24,7 +24,7 @@ const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
 
 // Set port
-const port = 3000
+const port = 3001;
 // Create schema
 const DocumentoSchema = mongoose.model('Documento', {
   fieldname: String,
