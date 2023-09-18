@@ -17,8 +17,6 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(() => {
     console.log("Couldn't connect to MongoDB");
   })
-
-
 // Import multer like the other dependencies
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' })
@@ -32,6 +30,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.get('/', (req, res) => {
   const filter = {};
   DocumentoSchema.find(filter).then((all) => {
+
     res.send(all);
   })
 })
@@ -40,9 +39,9 @@ app.get('/gastos', (req, res) => {
   GastoSchema.find(filter).then((all) => {
     res.send(all);
   })
-})
-// excel processing route
-app.post('/upload', upload.single('image'), (req, res) => {
+});
+
+app.post('/upload', upload.single('file'), (req, res) => {
   const documento = new DocumentoSchema(req.file);
   const documentoJSON = leeExcel(req.file.path);
   const gastoTemp = {};
