@@ -43,7 +43,6 @@ app.get('/gastos', (req, res) => {
 })
 // excel processing route
 app.post('/upload', upload.single('image'), (req, res) => {
-
   const documento = new DocumentoSchema(req.file);
   const documentoJSON = leeExcel(req.file.path);
   const gastoTemp = {};
