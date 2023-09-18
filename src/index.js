@@ -1,13 +1,15 @@
-// Import dependencies
 const { leeExcel } = require('./controller/excelController');
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 var bodyParser = require('body-parser');
+let DocumentoSchema = require('./schemas/Documento');
+let GastoSchema = require('./schemas/Gasto');
 const app = express();
-import { DocumentoSchema, GastoSchema } from './schemas/schemas';
+// Load env variables
 dotenv.config();
 // Connect to DB
+console.log(process.env.MONGO_URI);
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected to MongoDB");
@@ -18,15 +20,13 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 // Import multer like the other dependencies
-const multer = require('multer')
-// Set multer file storage folder
+const multer = require('multer');
 const upload = multer({ dest: 'uploads/' })
-
-// Set port
 const port = 3001;
 
 // Register middlewares
 app.use(bodyParser.urlencoded({ extended: false }))
+// Import schemas
 
 // Home route
 app.get('/', (req, res) => {
