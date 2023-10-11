@@ -23,7 +23,8 @@ const upload = multer({ dest: 'uploads/' })
 const port = 3001;
 
 // Register middlewares
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // Import schemas
 
 // Home route
@@ -42,24 +43,50 @@ app.get('/gastos', (req, res) => {
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
+  const tarjeta = req.query.TARJETA;
   const documento = new DocumentoSchema(req.file);
   const documentoJSON = leeExcel(req.file.path);
   const gastoTemp = {};
-  for (let i=3; i<documentoJSON.length; i++) {
-    if (documentoJSON[i][1] != null || documentoJSON[i][1] != undefined || documentoJSON[i][1] != ""){
-    const gasto = new GastoSchema();
-    gasto.tarjeta = documentoJSON [0][0];
-    gastoTemp.fecha = documentoJSON[i][0];
-    gastoTemp.descripcion = documentoJSON[i][1];
-    gastoTemp.cargo = documentoJSON[i][2];
-    gastoTemp.abono = documentoJSON[i][3];
-    gasto.Cargo = {...gastoTemp};
-    console.log("gasto:",gasto);
-    gasto.save().then(() => console.log('Gasto guardado'));
+  
+  console.log("tarjeta:",tarjeta);
+  if( tarjeta == null || tarjeta == undefined || tarjeta == ""){
+    res.send('No se ha especificado la tarjeta');
+  }
+  else{
+    if (tarjeta == "BBVA"){
+      for (let i=3; i<documentoJSON.length; i++) {
+        if (documentoJSON[i][1] != null || documentoJSON[i][1] != undefined || documentoJSON[i][1] != ""){
+        const gasto = new GastoSchema();
+        gasto.tarjeta = documentoJSON [0][0];
+        gastoTemp.fecha = documentoJSON[i][0];
+        gastoTemp.descripcion = documentoJSON[i][1];
+        gastoTemp.cargo = documentoJSON[i][2];
+        gastoTemp.abono = documentoJSON[i][3];
+        gasto.Cargo = {...gastoTemp};
+        console.log("gasto:",gasto);
+        gasto.save().then(() => console.log('Gasto guardado'));
+        }
+      }
+    }
+    if(tarjeta=="AMEX"){
+      for (let i=3; i<documentoJSON.length; i++) {
+        if (documentoJSON[i][1] != null || documentoJSON[i][1] != undefined || documentoJSON[i][1] != ""){
+        const gasto = new GastoSchema();
+        gasto.tarjeta = documentoJSON [0][0];
+        gastoTemp.fecha = documentoJSON[i][0];
+        gastoTemp.descripcion = documentoJSON[i][1];
+        gastoTemp.cargo = documentoJSON[i][2];
+        gastoTemp.abono = documentoJSON[i][3];
+        gasto.Cargo = {...gastoTemp};
+        console.log("gasto:",gasto);
+        gasto.save().then(() => console.log('Gasto guardado'));
+        }
+      }
     }
   }
+  
   documento.save().then(() => console.log('Documento guardado'));
-  res.send('Image uploaded successfully');
+  res.send('Estado de cuenta dado de alta de manera correcta de la tarjeta:');
 })
 
 
