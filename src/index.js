@@ -63,23 +63,24 @@ app.post('/upload', upload.single('file'), (req, res) => {
         gastoTemp.cargo = documentoJSON[i][2];
         gastoTemp.abono = documentoJSON[i][3];
         gasto.Cargo = {...gastoTemp};
-        console.log("gasto:",gasto);
         gasto.save().then(() => console.log('Gasto guardado'));
         }
       }
     }
-    if(tarjeta=="AMEX"){
+    if(tarjeta=="BBVA CREDITO"){
+      //console.log(documentoJSON);
       for (let i=3; i<documentoJSON.length; i++) {
-        if (documentoJSON[i][1] != null || documentoJSON[i][1] != undefined || documentoJSON[i][1] != ""){
-        const gasto = new GastoSchema();
-        gasto.tarjeta = documentoJSON [0][0];
-        gastoTemp.fecha = documentoJSON[i][0];
-        gastoTemp.descripcion = documentoJSON[i][1];
-        gastoTemp.cargo = documentoJSON[i][2];
-        gastoTemp.abono = documentoJSON[i][3];
-        gasto.Cargo = {...gastoTemp};
-        console.log("gasto:",gasto);
-        gasto.save().then(() => console.log('Gasto guardado'));
+        //console.log(documentoJSON[i][1]);
+        if (documentoJSON[i][1] != null || documentoJSON[i][1] != undefined || documentoJSON[i][1] != ""|| documentoJSON[i][1] != "DESCRIPCIÓN"){
+          console.log(documentoJSON[i][1]);
+          const gasto = new GastoSchema();
+          gasto.tarjeta = documentoJSON [0][0];
+          gastoTemp.fecha = documentoJSON[i][0];
+          gastoTemp.descripcion = documentoJSON[i][1];
+          gastoTemp.cargo = documentoJSON[i][2];
+          gastoTemp.abono = documentoJSON[i][3];
+          gasto.Cargo = {...gastoTemp};
+          gasto.save().then(() => console.log('Gasto guardado'));
         }
       }
     }
