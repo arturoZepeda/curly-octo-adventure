@@ -85,17 +85,23 @@ app.post('/upload', upload.single('file'), (req, res) => {
       }
     }
     if(tarjeta=="AMEX"){
-      //console.log(documentoJSON);
-      for (let i=18; i<documentoJSON.length; i++) {
-        //console.log(documentoJSON[i][1]);
-        if (documentoJSON[i][1] != null || documentoJSON[i][1] != undefined || documentoJSON[i][1] != ""|| documentoJSON[i][1] != "DESCRIPCIÓN"){
-          console.log(documentoJSON[i][1]);
+      for (let i=17; i<documentoJSON.length; i++) {
+        if (documentoJSON[i][1] != null || documentoJSON[i][1] != undefined || documentoJSON[i][1] != ""|| documentoJSON[i][1] != "Fecha de Compra"){
           const gasto = new GastoSchema();
-          gasto.tarjeta = documentoJSON [0][0];
+          gasto.tarjeta = documentoJSON [0][2];
           gastoTemp.fecha = documentoJSON[i][0];
-          gastoTemp.descripcion = documentoJSON[i][1];
-          gastoTemp.cargo = documentoJSON[i][2];
-          gastoTemp.abono = documentoJSON[i][3];
+          gastoTemp.descripcion = documentoJSON[i][2];
+          let esCargo =documentoJSON[i][4];
+          esCargo=esCargo.replace("$","");
+          esCargo=esCargo.replace(",","");
+          console.log(esCargo);
+          if (esCargo>0){
+            gastoTemp.cargo = esCargo;
+            gastoTemp.abono = 0;
+          }else{
+            gastoTemp.cargo = 0;
+            gastoTemp.abono = esCargo;
+          }
           gasto.Cargo = {...gastoTemp};
           gasto.save().then(() => console.log('Gasto guardado'));
         }
@@ -104,7 +110,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
   }
   
   documento.save().then(() => console.log('Documento guardado'));
-  res.send('Estado de cuenta dado de alta de manera correcta de la tarjeta:');
+  res.send('Estado de cuenta dado de alta de manera correcta de la tarjeta:', tarjeta);
 })
 
 
